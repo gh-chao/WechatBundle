@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" id="lilocon.security.authentication.wechat_provider" public="false"/>
+        <service class="Lilocon\WechatBundle\Security\Firewall\WechatListener" id="lilocon.security.authentication.wechat_listener" public="false">
+            <argument id="security.token_storage" type="service"/>
+            <argument id="security.authentication.manager" type="service"/>
+        </service>
+    </services>
+
+</container>
