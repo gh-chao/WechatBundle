@@ -11,6 +11,7 @@ class WechatProvider implements AuthenticationProviderInterface
 
     public function authenticate(TokenInterface $token)
     {
+        $token->setAuthenticated(true);
         return $token;
     }
 

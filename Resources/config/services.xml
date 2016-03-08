@@ -1,15 +1,32 @@
 <?xml version="1.0" ?>
 
-<container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" id="lilocon.security.authentication.wechat_provider" public="false"/>
-        <service class="Lilocon\WechatBundle\Security\Firewall\WechatListener" id="lilocon.security.authentication.wechat_listener" public="false">
+        <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true"/>
+        <service id="lilocon.security.authentication.wechat_listener" class="Lilocon\WechatBundle\Security\Firewall\WechatListener" public="false" abstract="true">
             <argument id="security.token_storage" type="service"/>
             <argument id="security.authentication.manager" type="service"/>
+            <argument id="security.http_utils" type="service"/>
+            <argument id="lilocon.wechat.sdk" type="service"/>
+            <argument id="event_dispatcher" type="service"/>
+            <argument type="collection"/>
         </service>
+
+        <service id="lilocon.wechat.sdk" class="EasyWeChat\Foundation\Application">
+            <argument type="collection"/>
+            <call method="__set">
+                <argument type="string">cache</argument>
+                <argument id="wechat_cache" type="service"/>
+            </call>
+        </service>
+
+        <service id="lilocon_wechat.event.wechat_authorize_listener" class="Lilocon\WechatBundle\Event\WechatAuthorizeListener">
+            <argument type="string"/>
+            <argument id="doctrine.orm.default_entity_manager" type="service"/>
+            <tag name="kernel.event_listener" event="lilocon.wechat.authorize" />
+        </service>
+
     </services>
 
 </container>

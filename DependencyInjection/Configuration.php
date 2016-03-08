@@ -24,6 +24,9 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('app_id')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('app_secret')->isRequired()->cannotBeEmpty()->end()
+                ->scalarNode('token')->isRequired()->end()
+                ->scalarNode('cache_provider')->isRequired()->end()
+                ->scalarNode('entity_name')->isRequired()->end()
             ->end()
         ;
 

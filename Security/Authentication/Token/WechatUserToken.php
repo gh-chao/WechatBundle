@@ -6,11 +6,17 @@ use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
 class WechatUserToken extends AbstractToken
 {
-    public function __construct(array $roles = array())
+
+    /**
+     * @var string
+     */
+    protected $openid;
+
+    public function __construct($openid, array $roles = array())
     {
         parent::__construct($roles);
 
-        // If the user has roles, consider it authenticated
+        $this->openid = $openid;
         $this->setAuthenticated(count($roles) > 0);
     }
 

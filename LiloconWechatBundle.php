@@ -2,6 +2,7 @@
 
 namespace Lilocon\WechatBundle;
 
+use Doctrine\Common\Util\Debug;
 use Lilocon\WechatBundle\DependencyInjection\Security\Factory\WechatFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

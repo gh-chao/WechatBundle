@@ -38,5 +38,10 @@ class WechatFactory implements SecurityFactoryInterface
 
     public function addConfiguration(NodeDefinition $node)
     {
+        $node
+            ->children()
+                ->scalarNode('authorize_path')->isRequired()->end()
+            ->end()
+        ;
     }
 }

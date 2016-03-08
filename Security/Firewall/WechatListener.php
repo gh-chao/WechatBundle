@@ -2,55 +2,109 @@
 
 namespace Lilocon\WechatBundle\Security\Firewall;
 
+use EasyWeChat\Foundation\Application;
+use Lilocon\WechatBundle\Event\WechatAuthorizeEvent;
 use Lilocon\WechatBundle\Security\Authentication\Token\WechatUserToken;
-use Lilocon\WechatBundle\Security\Authentication\User\SnsapiBase;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\AuthenticationEvents;
+use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
+use Symfony\Component\Security\Http\HttpUtils;
 
 class WechatListener implements ListenerInterface
 {
+
+    const REDIRECT_URL_KEY = '_wechat.redirect_url';
+
     protected $tokenStorage;
     protected $authenticationManager;
+    /**
+     * @var array
+     */
+    protected $options = array(
+        'authorize_path' => '/wechat/authorize'
+    );
 
-    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager)
+    /**
+     * @var HttpUtils
+     */
+    protected $httpUtils;
+
+    /**
+     * @var Application
+     */
+    private $sdk;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $event_dispatcher;
+
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        AuthenticationManagerInterface $authenticationManager,
+        HttpUtils $httpUtils,
+        Application $sdk,
+        EventDispatcherInterface $event_dispatcher,
+        array $options
+    )
     {
         $this->tokenStorage = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
+        $this->options = array_merge($this->options, $options);
+        $this->httpUtils = $httpUtils;
+        $this->sdk = $sdk;
+        $this->event_dispatcher = $event_dispatcher;
     }
 
     public function handle(GetResponseEvent $event)
     {
-//        $request = $event->getRequest();
+        $request = $event->getRequest();
+        $session = $request->getSession();
 
-        $user = new SnsapiBase();
-        $user->setOpenid(1);
+        /** @var \Overtrue\Socialite\Providers\WeChatProvider $oauth */
+        $oauth = $this->sdk->oauth;
 
-        $token = new WechatUserToken(array('ROLE_ADMIN'));
-        $token->setUser($user);
+        // 授权页面
+        if ($this->httpUtils->checkRequestPath($request, $this->options['authorize_path'])) {
+            // 获取 OAuth 授权结果用户信息
+            $user = $oauth->user()->getOriginal();
 
-        try {
-            $authToken = $this->authenticationManager->authenticate($token);
-            $this->tokenStorage->setToken($authToken);
+            $wechatAuthorizeEvent = new WechatAuthorizeEvent($user);
+            $this->event_dispatcher->dispatch('lilocon.wechat.authorize', $wechatAuthorizeEvent);
+
+            $token = new WechatUserToken($user['openid'], array('ROLE_USER', 'ROLE_WECHAT_USER'));
+
+            $this->tokenStorage->setToken($token);
+            $this->event_dispatcher->dispatch(
+                AuthenticationEvents::AUTHENTICATION_SUCCESS,
+                new AuthenticationEvent($token)
+            );
+
+            $redirect_url = $session->get(self::REDIRECT_URL_KEY);
+            $session->remove(self::REDIRECT_URL_KEY);
+            $event->setResponse(new RedirectResponse($redirect_url));
             return;
-        } catch (AuthenticationException $failed) {
-            // ... you might log something here
-
-            // To deny the authentication clear the token. This will redirect to the login page.
-            // Make sure to only clear your token, not those of other authentication listeners.
-            // $token = $this->tokenStorage->getToken();
-            // if ($token instanceof WsseUserToken && $this->providerKey === $token->getProviderKey()) {
-            //     $this->tokenStorage->setToken(null);
-            // }
-            // return;
         }
 
-        // By default deny authorization
-//        $response = new Response();
-//        $response->setStatusCode(Response::HTTP_FORBIDDEN);
-//        $event->setResponse($response);
+        $token = $this->tokenStorage->getToken();
+
+        if ($token === null) {
+            // 未授权, 重定向到微信授权页面
+            $session->set(self::REDIRECT_URL_KEY, $request->getUri());
+
+            $target_url = $request->getUriForPath($this->options['authorize_path']);
+            $response = $oauth->scopes(['snsapi_userinfo'])->redirect($target_url);
+            $event->setResponse($response);
+
+            return;
+        }
+        $this->tokenStorage->setToken($this->authenticationManager->authenticate($token));
+        return;
     }
+
 }
