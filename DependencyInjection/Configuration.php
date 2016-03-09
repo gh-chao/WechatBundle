@@ -25,8 +25,8 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('app_id')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('app_secret')->isRequired()->cannotBeEmpty()->end()
                 ->scalarNode('token')->isRequired()->end()
-                ->scalarNode('cache_provider')->isRequired()->end()
-                ->scalarNode('entity_name')->isRequired()->end()
+                ->scalarNode('cache_provider_id')->isRequired()->end()
+                ->scalarNode('user_class')->isRequired()->end()
             ->end()
         ;
 

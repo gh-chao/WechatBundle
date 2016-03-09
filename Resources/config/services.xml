@@ -3,7 +3,10 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true"/>
+        <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true">
+            <argument type="string">%lilocon.wechat.user_class%</argument>
+            <argument id="doctrine.orm.default_entity_manager" type="service"/>
+        </service>
         <service id="lilocon.security.authentication.wechat_listener" class="Lilocon\WechatBundle\Security\Firewall\WechatListener" public="false" abstract="true">
             <argument id="security.token_storage" type="service"/>
             <argument id="security.authentication.manager" type="service"/>
@@ -15,16 +18,12 @@
 
         <service id="lilocon.wechat.sdk" class="EasyWeChat\Foundation\Application">
             <argument type="collection"/>
-            <call method="__set">
-                <argument type="string">cache</argument>
-                <argument id="wechat_cache" type="service"/>
-            </call>
         </service>
 
-        <service id="lilocon_wechat.event.wechat_authorize_listener" class="Lilocon\WechatBundle\Event\WechatAuthorizeListener">
-            <argument type="string"/>
+        <service class="Lilocon\WechatBundle\Event\WechatEventSubscriber" id="lilocon_wechat.event.wechat_event_subscriber">
+            <argument type="string">%lilocon.wechat.user_class%</argument>
             <argument id="doctrine.orm.default_entity_manager" type="service"/>
-            <tag name="kernel.event_listener" event="lilocon.wechat.authorize" />
+            <tag name="kernel.event_subscriber"/>
         </service>
 
     </services>

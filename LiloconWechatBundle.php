@@ -2,7 +2,7 @@
 
 namespace Lilocon\WechatBundle;
 
-use Doctrine\Common\Util\Debug;
+use Lilocon\WechatBundle\DependencyInjection\Compiler\ReplaceLoggerPass;
 use Lilocon\WechatBundle\DependencyInjection\Security\Factory\WechatFactory;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -17,5 +17,7 @@ class LiloconWechatBundle extends Bundle
         /** @var SecurityExtension $extension */
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new WechatFactory());
+
+        $container->addCompilerPass(new ReplaceLoggerPass());
     }
 }

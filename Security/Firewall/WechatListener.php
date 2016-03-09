@@ -4,7 +4,9 @@ namespace Lilocon\WechatBundle\Security\Firewall;
 
 use EasyWeChat\Foundation\Application;
 use Lilocon\WechatBundle\Event\WechatAuthorizeEvent;
+use Lilocon\WechatBundle\Exception\UserNotFoundException;
 use Lilocon\WechatBundle\Security\Authentication\Token\WechatUserToken;
+use Overtrue\Socialite\Providers\WeChatProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -66,7 +68,7 @@ class WechatListener implements ListenerInterface
         $request = $event->getRequest();
         $session = $request->getSession();
 
-        /** @var \Overtrue\Socialite\Providers\WeChatProvider $oauth */
+        /** @var WeChatProvider $oauth */
         $oauth = $this->sdk->oauth;
 
         // 授权页面
@@ -91,20 +93,25 @@ class WechatListener implements ListenerInterface
             return;
         }
 
-        $token = $this->tokenStorage->getToken();
-
-        if ($token === null) {
-            // 未授权, 重定向到微信授权页面
-            $session->set(self::REDIRECT_URL_KEY, $request->getUri());
-
-            $target_url = $request->getUriForPath($this->options['authorize_path']);
-            $response = $oauth->scopes(['snsapi_userinfo'])->redirect($target_url);
-            $event->setResponse($response);
-
+        do {
+            $token = $this->tokenStorage->getToken();
+            if ($token === null) {
+                break;
+            }
+            try {
+                $token = $this->authenticationManager->authenticate($token);
+            } catch(UserNotFoundException $e) {
+                break;
+            }
+            $this->tokenStorage->setToken($token);
             return;
-        }
-        $this->tokenStorage->setToken($this->authenticationManager->authenticate($token));
-        return;
+        } while(false);
+
+        // 未授权, 重定向到微信授权页面
+        $session->set(self::REDIRECT_URL_KEY, $request->getUri());
+        $target_url = $request->getUriForPath($this->options['authorize_path']);
+        $response = $oauth->scopes(['snsapi_userinfo'])->redirect($target_url);
+        $event->setResponse($response);
     }
 
 }

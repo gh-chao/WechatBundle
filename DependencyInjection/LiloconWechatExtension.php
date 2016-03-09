@@ -2,10 +2,9 @@
 
 namespace Lilocon\WechatBundle\DependencyInjection;
 
-use Doctrine\Common\Util\Debug;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -24,23 +23,25 @@ class LiloconWechatExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('lilocon.wechat.user_class', $config['user_class']);
+
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
         $sdk_definition = $container->getDefinition('lilocon.wechat.sdk');
         $sdk_definition->replaceArgument(0,
             array(
-                'debug'  => true,
+                'debug'  => false,
                 'app_id' => $config['app_id'],
                 'secret' => $config['app_secret'],
                 'token'  => $config['token'],
             )
         );
 
-        $container
-            ->getDefinition('lilocon_wechat.event.wechat_authorize_listener')
-            ->replaceArgument(0, $config['entity_name'])
-        ;
+        $sdk_definition->addMethodCall('__set', array(
+            'cache',
+            new Reference($config['cache_provider_id'])
+        ));
 
     }
 }
