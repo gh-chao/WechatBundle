@@ -326,7 +326,7 @@ class WechatUser implements WechatUserInterface
 ```
 
 
-C: Basic Bundle Configuration
+D: Basic Bundle Configuration
 -----------------------------
 
 
