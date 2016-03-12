@@ -211,14 +211,6 @@ class WechatUser implements WechatUserInterface
         return $this->sex;
     }
 
-    public function getSexString()
-    {
-        if (array_key_exists($this->sex, self::$sex_choices)) {
-            return self::$sex_choices[$this->sex];
-        }
-        return '未知';
-    }
-
     /**
      * Set province
      *
