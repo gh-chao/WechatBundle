@@ -3,6 +3,17 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <!--easywechat-->
+        <service class="Lilocon\WechatBundle\Factory\EasyWeChatFactory" id="lilocon_wechat.factory.easywechat_factory"/>
+        <service id="lilocon.wechat.sdk" class="EasyWeChat\Foundation\Application">
+            <tag name="monolog.logger" channel="wechat" />
+            <factory service="lilocon_wechat.factory.easywechat_factory" method="createNewInstance"/>
+            <argument type="collection" on-invalid="null"/>
+            <argument type="service" on-invalid="null"/>
+            <argument type="service" id="logger" on-invalid="null"/>
+        </service>
+
+        <!--security-->
         <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true">
             <argument type="string">%lilocon.wechat.user_class%</argument>
             <argument id="doctrine.orm.default_entity_manager" type="service"/>
@@ -16,10 +27,7 @@
             <argument type="collection"/>
         </service>
 
-        <service id="lilocon.wechat.sdk" class="EasyWeChat\Foundation\Application">
-            <argument type="collection"/>
-        </service>
-
+        <!--security event-->
         <service class="Lilocon\WechatBundle\Event\WechatEventSubscriber" id="lilocon_wechat.event.wechat_event_subscriber">
             <argument type="string">%lilocon.wechat.user_class%</argument>
             <argument id="doctrine.orm.default_entity_manager" type="service"/>

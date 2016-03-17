@@ -28,20 +28,25 @@ class LiloconWechatExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $sdk_definition = $container->getDefinition('lilocon.wechat.sdk');
-        $sdk_definition->replaceArgument(0,
-            array(
-                'debug'  => false,
-                'app_id' => $config['app_id'],
-                'secret' => $config['app_secret'],
-                'token'  => $config['token'],
-            )
+        $definition = $container->getDefinition('lilocon.wechat.sdk');
+
+        $argument = array(
+            'debug'  => false,
+            'app_id' => $config['app_id'],
+            'secret' => $config['app_secret'],
+            'token'  => $config['token'],
         );
 
-        $sdk_definition->addMethodCall('__set', array(
-            'cache',
-            new Reference($config['cache_provider_id'])
-        ));
+        if (array_key_exists('payment', $config)) {
+            $argument['payment'] = $config['payment'];
+        }
 
+        $definition->replaceArgument(0, $argument);
+        $definition->replaceArgument(1, new Reference($config['cache_provider_id']));
+
+        // alias
+        if (array_key_exists('alias', $config)) {
+            $container->setAlias($config['alias'], 'lilocon.wechat.sdk');
+        }
     }
 }

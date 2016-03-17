@@ -27,6 +27,16 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('token')->isRequired()->end()
                 ->scalarNode('cache_provider_id')->isRequired()->end()
                 ->scalarNode('user_class')->isRequired()->end()
+                ->scalarNode('alias')->end()
+                ->arrayNode('payment')
+                    ->children()
+                        ->scalarNode('merchant_id')->isRequired()->end()
+                        ->scalarNode('key')->isRequired()->end()
+                        ->scalarNode('cert_path')->isRequired()->end()
+                        ->scalarNode('key_path')->isRequired()->end()
+                        ->scalarNode('notify_url')->defaultNull()->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 
