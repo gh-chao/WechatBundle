@@ -375,8 +375,6 @@ LiloconWechatBundle Usage
 =======================
 
 ```php
-<?php
-        $sdk = $this->get('wechat_sdk');
-        $payment = $sdk->payment;
-
+$sdk = $container->get('wechat_sdk');
+$payment = $sdk->payment;
 ```
