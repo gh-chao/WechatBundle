@@ -335,9 +335,15 @@ D: Basic Bundle Configuration
 lilocon_wechat:
     app_id: "%app_id%"
     app_secret: "%app_secret%"
-    token: "%app_secret%"
+    token: "%token%"
     cache_provider_id: wechat_cache
-    user_class: AppBundle\Entity\WechatUser
+    user_class: Yesanpo\WechatBundle\Entity\WechatUser
+    alias: wechat_sdk
+    payment:
+        merchant_id: %merchant_id%
+        key: %key%
+        cert_path: "%kernel.root_dir%/../data/%kernel.environment%/cert/apiclient_cert.pem"
+        key_path: "%kernel.root_dir%/../data/%kernel.environment%/cert/apiclient_key.pem"
 ```
 
 ```yaml
@@ -365,3 +371,12 @@ wechat_authorize:
 ```
 
 
+LiloconWechatBundle Usage
+=======================
+
+```php
+<?php
+        $sdk = $this->get('wechat_sdk');
+        $payment = $sdk->payment;
+
+```
