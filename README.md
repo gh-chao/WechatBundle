@@ -337,7 +337,7 @@ lilocon_wechat:
     app_secret: "%app_secret%"
     token: "%token%"
     cache_provider_id: wechat_cache
-    user_class: Yesanpo\WechatBundle\Entity\WechatUser
+    user_class: AppBundle\Entity\WechatUser
     alias: wechat_sdk
     payment:
         merchant_id: %merchant_id%
