@@ -41,6 +41,7 @@ class WechatFactory implements SecurityFactoryInterface
         $node
             ->children()
                 ->scalarNode('authorize_path')->isRequired()->end()
+                ->scalarNode('default_redirect')->end()
             ->end()
         ;
     }

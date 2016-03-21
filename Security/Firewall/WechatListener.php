@@ -28,7 +28,8 @@ class WechatListener implements ListenerInterface
      * @var array
      */
     protected $options = array(
-        'authorize_path' => '/wechat/authorize'
+        'authorize_path' => '/wechat/authorize',
+        'default_redirect' => '/wechat',
     );
 
     /**
@@ -87,7 +88,8 @@ class WechatListener implements ListenerInterface
                 new AuthenticationEvent($token)
             );
 
-            $redirect_url = $session->get(self::REDIRECT_URL_KEY);
+            $redirect_url = $session->get(self::REDIRECT_URL_KEY) ?: $request->getUriForPath($this->options['default_redirect']);
+
             $session->remove(self::REDIRECT_URL_KEY);
             $event->setResponse(new RedirectResponse($redirect_url));
             return;
