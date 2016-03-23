@@ -9,9 +9,9 @@ class EasyWeChatFactory
 {
     public static function createNewInstance($config, $cache, $logger)
     {
+        Log::setLogger($logger);
         $application = new Application($config);
         $application->offsetSet('cache', $cache);
-        Log::setLogger($logger);
 
         return $application;
     }
