@@ -1,4 +1,4 @@
-Step 1: Setting up the bundle
+Setting up the bundle
 =============================
 
 A: Download the Bundle
