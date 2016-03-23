@@ -12,6 +12,9 @@
             <argument type="service" on-invalid="null"/>
             <argument type="service" id="logger" on-invalid="null"/>
         </service>
+        <service class="Lilocon\WechatBundle\Message\MessageHandler" id="lilocon_wechat.message.handler">
+            <argument id="event_dispatcher" type="service"/>
+        </service>
 
         <!--security-->
         <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true">

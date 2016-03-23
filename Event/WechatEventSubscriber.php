@@ -29,9 +29,9 @@ class WechatEventSubscriber implements EventSubscriberInterface
      */
     public function __construct($userClass, EntityManager $entityManager)
     {
-        $this->em = $entityManager;
+        $this->em         = $entityManager;
         $this->repository = $entityManager->getRepository($userClass);
-        $this->userClass = $userClass;
+        $this->userClass  = $userClass;
     }
 
     public function onWechatAuthorize(WechatAuthorizeEvent $event)
@@ -54,6 +54,8 @@ class WechatEventSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array('lilocon.wechat.authorize' => 'onWechatAuthorize');
+        return array(
+            Events::AUTHORIZE => 'onWechatAuthorize',
+        );
     }
 }
