@@ -37,6 +37,12 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <!--twig extension-->
+        <service class="Lilocon\WechatBundle\Twig\Extension\EasyWechat" id="lilocon_wechat.twig_extension.easy_wechat">
+            <tag name="twig.extension"/>
+            <argument id="lilocon.wechat.sdk" type="service"/>
+        </service>
+
     </services>
 
 </container>
