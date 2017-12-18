@@ -15,13 +15,6 @@
             <argument id="event_dispatcher" type="service"/>
             <argument type="collection"/>
         </service>
-
-        <!--security event-->
-        <!--<service class="Lilocon\WechatBundle\Event\WechatEventSubscriber" id="lilocon_wechat.event.wechat_event_subscriber">-->
-            <!--<argument type="service" on-invalid="null"/>-->
-            <!--<tag name="kernel.event_subscriber"/>-->
-        <!--</service>-->
-
     </services>
 
 </container>
