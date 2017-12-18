@@ -5,7 +5,7 @@
     <services>
         <!--security-->
         <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true">
-            <argument type="service" on-invalid="null"/>
+            <argument />
         </service>
         <service id="lilocon.security.authentication.wechat_listener" class="Lilocon\WechatBundle\Security\Firewall\WechatListener" public="false" abstract="true">
             <argument id="security.token_storage" type="service"/>

@@ -171,6 +171,115 @@ doctrine_cache:
       user_provider_id: app_wechat_user_provider  # 用户提供者 service_id, 由下面进行讲解
 ```
 
+
+##### 定义 User Entity
+
+```php
+<?php
+// src/AppBundle/Entity/User.php
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * User
+ *
+ * @ORM\Table(name="user")
+ * @ORM\Entity(repositoryClass="Doctrine\ORM\EntityRepository")
+ */
+class User
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="openid", type="string", length=255)
+     */
+    private $openid;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nickname", type="string", length=255)
+     */
+    private $nickname;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set openid
+     *
+     * @param string $openid
+     *
+     * @return User
+     */
+    public function setOpenid($openid)
+    {
+        $this->openid = $openid;
+
+        return $this;
+    }
+
+    /**
+     * Get openid
+     *
+     * @return string
+     */
+    public function getOpenid()
+    {
+        return $this->openid;
+    }
+
+    /**
+     * Set nickname
+     *
+     * @param string $nickname
+     *
+     * @return User
+     */
+    public function setNickname($nickname)
+    {
+        $this->nickname = $nickname;
+
+        return $this;
+    }
+
+    /**
+     * Get nickname
+     *
+     * @return string
+     */
+    public function getNickname()
+    {
+        return $this->nickname;
+    }
+
+    public function __toString()
+    {
+        return $this->nickname;
+    }
+}
+
+```
+
+
 ##### 定义授权事件监听器
 
 ```php
@@ -297,14 +406,14 @@ services:
 #app/config/security.yml
 security:
     firewalls:
-        # ... 其他配置
+        # 注意优先级问题
         wechat:
             anonymous: ~
             pattern: ^/wechat
             wechat_login:
                 default_redirect: /wechat #授权后默认跳转地址
                 authorize_path: /wechat/authorize  #授权地址
-
+        # ... 其他配置
     access_control:
         # ... 其他配置
         - { path: ^/wechat/authorize, roles: IS_AUTHENTICATED_ANONYMOUSLY } # 授权地址不需要登录
@@ -320,7 +429,20 @@ wechat_authorize:
     path: /wechat/authorize
 ```
 
-微信浏览器打开  http://domain/wechat/ 体验
+
+##### 添加测试路由
+```php
+    /**
+     * @Route("/wechat/test")
+     */
+    public function testAction()
+    {
+        return new \Symfony\Component\HttpFoundation\Response($this->getUser());
+    }
+```
+
+
+微信浏览器打开  http://domain/wechat/test 体验
 
 
 ## 开放平台支持
@@ -329,7 +451,7 @@ wechat_authorize:
 ```yaml
 wechat_open_platform_authorize:
     resource: '@LiloconWechatBundle/Resources/config/routing.xml'
-    prefix: /wechat/open-platfom-notify
+    prefix: /open-platfom-notify
 ```
 然后监听对应事件就可以了
 
