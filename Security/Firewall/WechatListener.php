@@ -5,7 +5,6 @@ namespace Lilocon\WechatBundle\Security\Firewall;
 use EasyWeChat\Foundation\Application;
 use Lilocon\WechatBundle\Event\Events;
 use Lilocon\WechatBundle\Event\AuthorizeEvent;
-use Lilocon\WechatBundle\Exception\UserNotFoundException;
 use Lilocon\WechatBundle\Security\Authentication\Token\WechatUserToken;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -102,19 +101,13 @@ class WechatListener implements ListenerInterface
             return;
         }
 
-        do {
-            $token = $this->tokenStorage->getToken();
-            if ($token === null) {
-                break;
-            }
-            try {
-                $token = $this->authenticationManager->authenticate($token);
-            } catch(UserNotFoundException $e) {
-                break;
-            }
+        $token = $this->tokenStorage->getToken();
+        if ($token !== null) {
+            $token = $this->authenticationManager->authenticate($token);
             $this->tokenStorage->setToken($token);
+
             return;
-        } while(false);
+        }
 
         // 未授权, 重定向到微信授权页面
         $session->set(self::REDIRECT_URL_KEY, $request->getUri());
