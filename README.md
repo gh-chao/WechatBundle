@@ -8,7 +8,7 @@
 
 ## 安装
 
-1. 安装包文件
+通过composer安装
 
   ```shell
   composer require "lilocon/wechat-bundle"
@@ -16,7 +16,7 @@
 
 ## 配置
 
-1. 注册 `Bundle`:
+##### 注册 `Bundle`:
 
 ```php
 // app/AppKernel.php
@@ -38,7 +38,7 @@ class AppKernel extends Kernel
 }
 ```
 
-2. 更新配置文件：
+##### 更新配置文件：
 
 ```yaml
 # app/config/config.yml
@@ -99,13 +99,13 @@ lilocon_wechat:
 ## 基本使用
 经过以上配置, 该bundle已经可以运行起来了
 
-在控制器调用案例
+##### 在控制器调用案例
 
 ```php
 $wechat = $this->get('wechat_sdk');
 ```
 
-下面以接收普通消息为例写一个例子：
+##### 下面以接收普通消息为例写一个例子：
 
 ```php
 class WechatController extends Controller
@@ -133,7 +133,7 @@ class WechatController extends Controller
 
 在 SDK 中的所有缓存默认使用文件缓存，缓存路径取决于 PHP 的临时目录，如果你需要自定义缓存，那么你需要做如下的事情：
 
-修改配置
+##### 修改配置
 
 ```php
     # sdk缓存配置
@@ -144,7 +144,7 @@ class WechatController extends Controller
 
 其中cache_id是你自己定义的service_id
 
-以下是使用doctrine-cache-bundle的配置案例
+##### 以下是使用doctrine-cache-bundle的配置案例
 
 ```yaml
 doctrine_cache:
@@ -174,8 +174,8 @@ doctrine_cache:
 ##### 定义授权事件监听器
 
 ```php
-// src/AppBundle/Events/WechatEventSubscriber.php
 <?php
+// src/AppBundle/Events/WechatEventSubscriber.php
 
 namespace AppBundle\Events;
 
@@ -237,8 +237,8 @@ class WechatEventSubscriber implements EventSubscriberInterface
 ##### 定义用户提供者
 
 ```php
-// src/AppBundle/Providers/UserProvider.php
 <?php
+// src/AppBundle/Providers/UserProvider.php
 
 namespace AppBundle\Providers;
 
@@ -282,7 +282,7 @@ class UserProvider implements \Lilocon\WechatBundle\Contracts\UserProvider
 services:
     # ... 其他配置
     app_wechat_user_provider:
-        class: AppBundle\UserProvider
+        class: AppBundle\Providers\UserProvider
         arguments: ['@service_container']
     app.events.wechat_event_subscriber:
         class: AppBundle\Events\WechatEventSubscriber

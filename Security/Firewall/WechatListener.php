@@ -7,7 +7,6 @@ use Lilocon\WechatBundle\Event\Events;
 use Lilocon\WechatBundle\Event\AuthorizeEvent;
 use Lilocon\WechatBundle\Exception\UserNotFoundException;
 use Lilocon\WechatBundle\Security\Authentication\Token\WechatUserToken;
-use Overtrue\Socialite\Providers\WeChatProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
