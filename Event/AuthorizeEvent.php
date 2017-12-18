@@ -4,7 +4,7 @@ namespace Lilocon\WechatBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class WechatAuthorizeEvent extends Event
+class AuthorizeEvent extends Event
 {
     /**
      * @var array

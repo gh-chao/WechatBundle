@@ -31,7 +31,7 @@ class EasyWechat extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('lilocon_wechat_config', array($this, 'jsConfig')),
+            new \Twig_Function('lilocon_wechat_config', array($this, 'jsConfig')),
         );
     }
 

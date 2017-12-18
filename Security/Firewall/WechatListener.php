@@ -3,7 +3,8 @@
 namespace Lilocon\WechatBundle\Security\Firewall;
 
 use EasyWeChat\Foundation\Application;
-use Lilocon\WechatBundle\Event\WechatAuthorizeEvent;
+use Lilocon\WechatBundle\Event\Events;
+use Lilocon\WechatBundle\Event\AuthorizeEvent;
 use Lilocon\WechatBundle\Exception\UserNotFoundException;
 use Lilocon\WechatBundle\Security\Authentication\Token\WechatUserToken;
 use Overtrue\Socialite\Providers\WeChatProvider;
@@ -22,8 +23,16 @@ class WechatListener implements ListenerInterface
 
     const REDIRECT_URL_KEY = '_wechat.redirect_url';
 
+    /**
+     * @var TokenStorageInterface
+     */
     protected $tokenStorage;
+
+    /**
+     * @var \Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider
+     */
     protected $authenticationManager;
+
     /**
      * @var array
      */
@@ -69,7 +78,6 @@ class WechatListener implements ListenerInterface
         $request = $event->getRequest();
         $session = $request->getSession();
 
-        /** @var WeChatProvider $oauth */
         $oauth = $this->sdk->oauth;
 
         // 授权页面
@@ -77,8 +85,8 @@ class WechatListener implements ListenerInterface
             // 获取 OAuth 授权结果用户信息
             $user = $oauth->user()->getOriginal();
 
-            $wechatAuthorizeEvent = new WechatAuthorizeEvent($user);
-            $this->event_dispatcher->dispatch('lilocon.wechat.authorize', $wechatAuthorizeEvent);
+            $wechatAuthorizeEvent = new AuthorizeEvent($user);
+            $this->event_dispatcher->dispatch(Events::AUTHORIZE, $wechatAuthorizeEvent);
 
             $token = new WechatUserToken($user['openid'], array('ROLE_USER', 'ROLE_WECHAT_USER'));
 

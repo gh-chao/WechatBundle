@@ -2,8 +2,7 @@
 
 namespace Lilocon\WechatBundle\Security\Authentication\Provider;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
+use Lilocon\WechatBundle\Contracts\UserProvider;
 use Lilocon\WechatBundle\Exception\UserNotFoundException;
 use Lilocon\WechatBundle\Security\Authentication\Token\WechatUserToken;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
@@ -11,30 +10,19 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class WechatProvider implements AuthenticationProviderInterface
 {
-    /**
-     * @var string
-     */
-    private $userClass;
-    /**
-     * @var ObjectManager
-     */
-    private $objectManager;
 
     /**
-     * @var EntityRepository
+     * @var UserProvider
      */
-    private $repository;
+    private $userProvider;
 
     /**
      * WechatProvider constructor.
-     * @param string $userClass
-     * @param ObjectManager $objectManager
+     * @param UserProvider $userProvider
      */
-    public function __construct($userClass, ObjectManager $objectManager)
+    public function __construct(UserProvider $userProvider)
     {
-        $this->userClass = $userClass;
-        $this->objectManager = $objectManager;
-        $this->repository = $objectManager->getRepository($userClass);
+        $this->userProvider = $userProvider;
     }
 
     /**
@@ -45,7 +33,8 @@ class WechatProvider implements AuthenticationProviderInterface
     public function authenticate(TokenInterface $token)
     {
         /** @var WechatUserToken $token */
-        $user = $this->repository->findOneBy(array('openid' => $token->getOpenid()));
+        $user = $this->userProvider->find($token->getOpenid());
+
         if (!$user) {
             throw new UserNotFoundException();
         }

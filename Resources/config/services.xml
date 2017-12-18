@@ -9,32 +9,8 @@
             <tag name="monolog.logger" channel="wechat" />
             <factory service="lilocon_wechat.factory.easywechat_factory" method="createNewInstance"/>
             <argument type="collection" on-invalid="null"/>
+            <argument type="service" id="logger"/>
             <argument type="service" on-invalid="null"/>
-            <argument type="service" id="logger" on-invalid="null"/>
-        </service>
-        <service class="Lilocon\WechatBundle\Message\MessageHandler" id="lilocon_wechat.message.handler">
-            <argument id="event_dispatcher" type="service"/>
-        </service>
-
-        <!--security-->
-        <service id="lilocon.security.authentication.wechat_provider" class="Lilocon\WechatBundle\Security\Authentication\Provider\WechatProvider" public="false" abstract="true">
-            <argument type="string">%lilocon.wechat.user_class%</argument>
-            <argument id="doctrine.orm.default_entity_manager" type="service"/>
-        </service>
-        <service id="lilocon.security.authentication.wechat_listener" class="Lilocon\WechatBundle\Security\Firewall\WechatListener" public="false" abstract="true">
-            <argument id="security.token_storage" type="service"/>
-            <argument id="security.authentication.manager" type="service"/>
-            <argument id="security.http_utils" type="service"/>
-            <argument id="lilocon.wechat.sdk" type="service"/>
-            <argument id="event_dispatcher" type="service"/>
-            <argument type="collection"/>
-        </service>
-
-        <!--security event-->
-        <service class="Lilocon\WechatBundle\Event\WechatEventSubscriber" id="lilocon_wechat.event.wechat_event_subscriber">
-            <argument type="string">%lilocon.wechat.user_class%</argument>
-            <argument id="doctrine.orm.default_entity_manager" type="service"/>
-            <tag name="kernel.event_subscriber"/>
         </service>
 
         <!--twig extension-->
@@ -43,6 +19,14 @@
             <argument id="lilocon.wechat.sdk" type="service"/>
         </service>
 
+        <!--controller-->
+        <service class="Lilocon\WechatBundle\Controller\OpenPlatformController" id="lilocon_wechat.controller.open_platform_controller">
+            <argument id="lilocon.wechat.sdk" type="service"/>
+            <argument id="event_dispatcher" type="service"/>
+            <call method="setContainer">
+                <argument id="service_container" type="service"/>
+            </call>
+        </service>
     </services>
 
 </container>
