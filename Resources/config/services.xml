@@ -10,7 +10,7 @@
             <factory service="lilocon_wechat.factory.easywechat_factory" method="createNewInstance"/>
             <argument type="collection" on-invalid="null"/>
             <argument type="service" id="logger"/>
-            <argument type="service" on-invalid="null"/>
+            <argument />
         </service>
 
         <!--twig extension-->
