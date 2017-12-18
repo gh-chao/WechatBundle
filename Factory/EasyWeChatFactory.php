@@ -22,12 +22,13 @@ class EasyWeChatFactory
      */
     public static function createNewInstance(array $config, LoggerInterface $logger, $cache = null)
     {
+        Log::setLogger($logger);
+
         if ($cache) {
-            Log::setLogger($logger);
+            $config['cache'] = $cache;
         }
 
         $application = new Application($config);
-        $application->offsetSet('cache', $cache);
 
         return $application;
     }
