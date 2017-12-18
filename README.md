@@ -129,7 +129,7 @@ class WechatController extends Controller
 }
 ```
 
-##### 使用自定义缓存
+## 使用自定义缓存
 
 在 SDK 中的所有缓存默认使用文件缓存，缓存路径取决于 PHP 的临时目录，如果你需要自定义缓存，那么你需要做如下的事情：
 
@@ -162,7 +162,7 @@ doctrine_cache:
 
 微信授权登录, 本模块扩展了symfony security 使其支持微信登录
 
-1 在配置中开启此功能
+##### 在配置中开启此功能
 
 ```yaml
     # 防火墙配置
@@ -171,7 +171,7 @@ doctrine_cache:
       user_provider_id: app_wechat_user_provider  # 用户提供者 service_id, 由下面进行讲解
 ```
 
-2 定义授权事件监听器
+##### 定义授权事件监听器
 
 ```php
 // src/AppBundle/Events/WechatEventSubscriber.php
@@ -234,7 +234,7 @@ class WechatEventSubscriber implements EventSubscriberInterface
 }
 ```
 
-3 定义用户提供者
+##### 定义用户提供者
 
 ```php
 // src/AppBundle/Providers/UserProvider.php
@@ -275,7 +275,7 @@ class UserProvider implements \Lilocon\WechatBundle\Contracts\UserProvider
 }
 ```
 
-4 注册监听器
+##### 注册监听器
 
 ```yaml
 #app/config/services.yml
@@ -291,7 +291,7 @@ services:
             - { name: kernel.event_subscriber }
 ```
 
-5 添加防火墙
+##### 添加防火墙
 
 ```yaml
 #app/config/security.yml
@@ -311,7 +311,7 @@ security:
         - { path: ^/wechat, roles: ROLE_WECHAT_USER } # 需要微信登录的url前缀
 ```
 
-6 定义授权路由
+##### 定义授权路由
 
 ```yaml
 #app/config/routing.yml
@@ -323,7 +323,7 @@ wechat_authorize:
 微信浏览器打开  http://domain/wechat/ 体验
 
 
-#### 开放平台支持
+## 开放平台支持
 
 添加开放平台授权事件接收url的路由
 ```yaml
