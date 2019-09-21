@@ -4,15 +4,15 @@
     "description": "symfony wechat bundle",
     "authors": [
         {
-            "name": "lilocon",
-            "email": "897798676@qq.com"
+            "name": "brucelee",
+            "email": "122077550@qq.com"
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.8 || ~3.0",
-        "symfony/monolog-bundle": "~2.8 || ~3.0",
-        "symfony/security-bundle": "~2.8 || ~3.0",
-        "symfony/twig-bundle": "~2.8 || ~3.0",
+        "symfony/framework-bundle": "^3.0",
+        "symfony/monolog-bundle": "^3.0",
+        "symfony/security-bundle": "^3.0",
+        "symfony/twig-bundle": "^",
         "overtrue/wechat": "^3.0"
     },
     "autoload": {
